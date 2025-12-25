@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Stefany ❤️</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap');
+
+        :root {
+            --box-size: 200px;
+            --border-radius-box: 4px; 
+            
+            /* Paleta de Cores Premium */
+            --red-dark: #8e0000;
+            --red-main: #c62828;
+            --red-light: #e53935;
+            
+            /* Ouro Metálico */
+            --gold-dark: #b8860b;
+            --gold-main: #ffd700;
+            --gold-light: #ffecb3;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, #1a2a3a 0%, #090910 100%);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        /* --- Neve Suave --- */
+        .snow { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        .flake {
+            position: absolute; top: -10px; background: white;
+            border-radius: 50%; opacity: 0.6;
+            animation: fall linear infinite;
+            filter: blur(1px);
+        }
+        @keyframes fall { to { transform: translateY(110vh); } }
+
+        /* --- Cena 3D --- */
+        .scene {
+            position: relative;
+            width: var(--box-size);
+            height: var(--box-size);
+            transform-style: preserve-3d;
+            cursor: pointer;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: 10;
+        }
+
+        /* Aura Mágica atrás da caixa */
+        .scene::after {
+            content: '';
+            position: absolute;
+            width: 120%; height: 120%;
+            left: -10%; top: -10%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, transparent 70%);
+            transform: translateZ(-50px);
+            pointer-events: none;
+            opacity: 0.8;
+            animation: pulse-glow 3s infinite alternate;
+        }
+
+        .scene:not(.is-open) { animation: float 4s ease-in-out infinite; }
+        .scene:hover { transform: scale(1.03) rotateX(-5deg); }
+
+        /* --- A Caixa --- */
+        .box {
+            width: 100%; height: 100%;
+            position: absolute;
+            transform-style: preserve-3d;
+            transform: rotateX(-20deg) rotateY(45deg);
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .face {
+            position: absolute;
+            width: var(--box-size);
+            height: var(--box-size);
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: var(--border-radius-box);
+            backface-visibility: hidden; 
+        }
+
+        /* Faces com a textura */
+        .face.front, .face.back, .face.right, .face.left, .face.bottom, .lid-face {
+            background: repeating-linear-gradient(
+                135deg,
+                #b71c1c,
+                #b71c1c 15px,
+                #c62828 15px,
+                #c62828 30px
+            );
+             box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+        }
+
+        /* Posicionamento 3D */
+        .front  { transform: translateZ(calc(var(--box-size)/2 - 1px)); }
+        .back   { transform: rotateY(180deg) translateZ(calc(var(--box-size)/2 - 1px)); }
+        .right  { transform: rotateY(90deg) translateZ(calc(var(--box-size)/2 - 1px)); }
+        .left   { transform: rotateY(-90deg) translateZ(calc(var(--box-size)/2 - 1px)); }
+        .bottom { transform: rotateX(-90deg) translateZ(calc(var(--box-size)/2 - 1px)); box-shadow: 0 60px 70px rgba(0,0,0,0.5); }
+
+        /* --- A Fita (Ouro Realista) --- */
+        .gold-ribbon {
+            position: absolute;
+            background: linear-gradient(to right, var(--gold-dark), var(--gold-main), var(--gold-light), var(--gold-main), var(--gold-dark));
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+
+        .face::before { 
+            content: ''; position: absolute; 
+            width: 40px; height: 100%; 
+            left: 50%; transform: translateX(-50%);
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold-main), var(--gold-light), var(--gold-dark));
+            border-left: 1px solid rgba(255,255,255,0.4);
+            opacity: 0.95;
+        }
+
+        .bottom::after { 
+            content: ''; position: absolute; width: 100%; height: 40px; top: 50%; transform: translateY(-50%); 
+            background: linear-gradient(180deg, var(--gold-dark), var(--gold-main), var(--gold-dark));
+        }
+
+        /* --- A Tampa --- */
+        .lid {
+            position: absolute;
+            width: 150px;
+            height: 160px;
+            top: -5px; left: -2.5px;
+            transform: rotateX(90deg) translateZ(calc(var(--box-size)/2 + 2px)); 
+            transform-style: preserve-3d;
+            border-radius: var(--border-radius-box);
+            background: repeating-linear-gradient(135deg, #b71c1c, #b71c1c 15px, #c62828 15px, #c62828 30px);
+            
+            display: flex; justify-content: center; align-items: center;
+            transition: transform 1s cubic-bezier(0.5, 0, 0, 1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Cruz da fita na tampa */
+        .lid::before { content: ''; position: absolute; width: 40px; height: 100%; background: linear-gradient(90deg, var(--gold-dark), var(--gold-main), var(--gold-light), var(--gold-dark)); }
+        .lid::after { content: ''; position: absolute; width: 100%; height: 40px; background: linear-gradient(180deg, var(--gold-dark), var(--gold-main), var(--gold-light), var(--gold-dark)); }
+
+        /* --- O Laço Premium --- */
+        .bow-container { position: absolute; transform-style: preserve-3d; transform: translateZ(2px); }
+        
+        .bow-loop {
+            position: absolute; width: 90px; height: 90px;
+            border: 20px solid var(--gold-main);
+            border-radius: 50% 50% 0 50%; top: -45px;
+            background: radial-gradient(circle at center, transparent 30%, var(--gold-main) 31%);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.3), 0 5px 15px rgba(0,0,0,0.2);
+        }
+        /* Textura do laço para brilhar */
+        .bow-loop::before {
+            content: ''; position: absolute; width: 100%; height: 100%;
+            border-radius: inherit;
+            box-shadow: inset 2px 2px 5px rgba(255,255,255,0.5); /* Brilho speculcar */
+        }
+
+        .bow-loop.left { left: -90px; transform: rotate(45deg); border-radius: 50% 50% 50% 0; border-color: var(--gold-main); border-bottom-color: var(--gold-dark); }
+        .bow-loop.right { left: 0px; transform: rotate(-45deg); border-radius: 50% 50% 0 50%; border-color: var(--gold-main); border-bottom-color: var(--gold-dark); }
+        
+        .bow-center {
+            position: absolute; width: 30px; height: 30px;
+            background: radial-gradient(circle at 30% 30%, var(--gold-light), var(--gold-main), var(--gold-dark));
+            border-radius: 8px; left: -15px; top: -15px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.4); z-index: 5;
+        }
+
+        /* --- Sparkles (Brilhos Mágicos) --- */
+        .sparkle {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            animation: sparkle-anim linear infinite;
+            opacity: 0;
+            pointer-events: none;
+        }
+        @keyframes sparkle-anim {
+            0% { transform: translate(0, 0) scale(0); opacity: 0; }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+
+        /* --- Abertura --- */
+        .scene.is-open .box { transform: rotateX(10deg) rotateY(0) translateY(80px); }
+        .scene.is-open .lid { transform: rotateX(110deg) translateZ(200px) translateY(-100px); opacity: 0; }
+        .scene.is-open .face { opacity: 0.2; filter: grayscale(0.5); transition: opacity 1s; }
+
+        /* --- Cartão Elegante --- */
+        .card {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 360px;
+            background: linear-gradient(135deg, #fff, #f8f8f8);
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 5px rgba(255,215,0,0.3);
+            border: 1px solid #ffd700;
+            z-index: 100; opacity: 0; pointer-events: none;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); /* Efeito "pop" */
+        }
+        .scene.is-open ~ .card { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: all; transition-delay: 0.2s; }
+
+        .card h1 { font-family: 'Great Vibes', cursive; color: #b71c1c; font-size: 3.8rem; margin-bottom: 5px; text-shadow: 1px 1px 0px rgba(0,0,0,0.1); }
+        
+        .recipient { font-size: 1.2rem; color: #444; margin-bottom: 20px; font-weight: 500; letter-spacing: 0.5px; }
+        .recipient strong { color: #b71c1c; font-size: 1.3rem; }
+        
+        .message-body { font-size: 1.05rem; line-height: 1.7; color: #555; margin-bottom: 25px; font-family: 'Poppins', sans-serif; }
+        
+        .signature { margin-top: 30px; padding-top: 15px; border-top: 1px solid #eee; }
+        .signature span { display: block; font-size: 0.9rem; color: #888; text-transform: uppercase; letter-spacing: 2px; font-size: 0.7rem; margin-bottom: 5px; }
+        .signature strong { font-family: 'Great Vibes', cursive; font-size: 2rem; color: #b71c1c; font-weight: normal; }
+
+        .btn-close {
+            margin-top: 15px;
+            background: linear-gradient(45deg, #d32f2f, #b71c1c);
+            color: white; border: none;
+            padding: 12px 35px; border-radius: 50px;
+            font-size: 0.9rem; font-weight: 600; cursor: pointer; letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(183, 28, 28, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-close:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(183, 28, 28, 0.6); }
+
+        .hint { position: absolute; bottom: 12%; color: #ffd700; font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; animation: pulse 2s infinite; pointer-events: none; opacity: 0.8; }
+        .scene.is-open + .hint { display: none; }
+
+        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        @keyframes pulse-glow { 0% { opacity: 0.5; transform: translateZ(-50px) scale(0.9); } 100% { opacity: 0.9; transform: translateZ(-50px) scale(1.1); } }
+        @keyframes pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            :root { --box-size: 150px; }
+            .scene { transform: scale(0.85); }
+            .card { width: 90%; padding: 25px; }
+            .card h1 { font-size: 3rem; }
+        }
+        
+        /* Estilo dos Confetes - 3D ativado */
+        .confetti { 
+            position: absolute; 
+            z-index: 200; 
+            pointer-events: none;
+            transform-style: preserve-3d; /* Importante para o giro 3D */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="snow" id="snow"></div>
+    <div id="sparkles"></div> 
+    
+    <div class="scene" id="scene" onclick="toggleGift()">
+        <div class="box">
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face right"></div>
+            <div class="face left"></div>
+            <div class="face bottom"></div>
+            
+            <div class="lid">
+                <div class="bow-container">
+                    <div class="bow-loop left"></div>
+                    <div class="bow-loop right"></div>
+                    <div class="bow-center"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hint">Toque para abrir</div>
+
+    <div class="card">
+        <h1>Feliz Natal!</h1>
+        
+        <p class="recipient">Para <strong>Stefany</strong>,</p>
+        
+        <p class="message-body">
+            Neste Natal, olhei para todas as luzes da cidade e só consegui pensar em como elas perdem a graça perto da luz que você carrega no olhar. Você tem uns olhos que não só são lindos por fora, mas que transmitem uma doçura que conquista qualquer um. Você é um presente especial na vida de qualquer um, você que torna meus dias melhores só por existir. Que o seu Natal seja tão incrível e radiante quanto você é para mim. ✨❤️
+        </p>
+
+        <div class="signature">
+            <span>Com todo carinho</span>
+            <strong>Henrique Pereira</strong>
+        </div>
+
+        <button class="btn-close" onclick="toggleGift()">Guardar Lembrança</button>
+    </div>
+
+    <script>
+        // Neve
+        const snowContainer = document.getElementById('snow');
+        for(let i=0; i<50; i++){
+            let div = document.createElement('div');
+            div.className = 'flake';
+            div.style.left = Math.random() * 100 + '%';
+            div.style.width = div.style.height = (Math.random() * 4 + 2) + 'px';
+            div.style.animationDuration = (Math.random() * 3 + 4) + 's';
+            div.style.animationDelay = Math.random() * 5 + 's';
+            snowContainer.appendChild(div);
+        }
+
+        // Brilhos Mágicos
+        const sparkleContainer = document.getElementById('sparkles');
+        setInterval(() => {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            const x = window.innerWidth / 2 + (Math.random() - 0.5) * 250; 
+            const y = window.innerHeight / 2 + (Math.random() - 0.5) * 250;
+            sparkle.style.left = x + 'px';
+            sparkle.style.top = y + 'px';
+            sparkle.style.setProperty('--tx', (Math.random() - 0.5) * 50 + 'px');
+            sparkle.style.setProperty('--ty', (Math.random() - 0.5) * 50 + 'px');
+            sparkle.style.animationDuration = (Math.random() * 1 + 0.5) + 's';
+            sparkleContainer.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 2000);
+        }, 100);
+
+        // --- LÓGICA DE ABRIR E CONFETES ---
+        let isOpen = false;
+        
+        function toggleGift() {
+            if (isOpen && event.target.tagName !== 'BUTTON') return;
+            const scene = document.getElementById('scene');
+            isOpen = !isOpen;
+            if(isOpen) {
+                scene.classList.add('is-open');
+                // DISPARA OS CONFETES MAIS ANIMADOS!
+                createAnimatedConfetti(); 
+            } else {
+                scene.classList.remove('is-open');
+            }
+        }
+
+        // Função de Confetes SUPER ANIMADOS
+        function createAnimatedConfetti() {
+            const colors = ['#d32f2f', '#ffd700', '#ffffff', '#e57373', '#ffecb3', '#4caf50', '#2196f3'];
+            const confettiCount = 200; // Mais confetes
+
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Variação no tamanho para mais realismo
+                const width = Math.random() * 8 + 6;
+                const height = Math.random() * 6 + 4;
+                confetti.style.width = `${width}px`;
+                confetti.style.height = `${height}px`;
+
+                // Posição inicial: Centro da tela
+                confetti.style.left = '50%';
+                confetti.style.top = '50%';
+                
+                // Física do Arco: Força para cima e para os lados
+                const angleX = (Math.random() - 0.5) * 2; // Espalhamento horizontal
+                const forceX = (100 + Math.random() * 500) * angleX;
+                const forceY = - (300 + Math.random() * 400); // Força para CIMA (negativo Y)
+                const endY = window.innerHeight + Math.random() * 200; // Onde eles caem (abaixo da tela)
+
+                // Rotação 3D insana
+                const rotX = Math.random() * 360 * (Math.random() > 0.5 ? 1 : -1);
+                const rotY = Math.random() * 360 * (Math.random() > 0.5 ? 1 : -1);
+                const rotZ = Math.random() * 360 * (Math.random() > 0.5 ? 1 : -1);
+                const spinMulti = 3 + Math.random() * 3; // Quantas voltas eles dão
+
+                document.body.appendChild(confetti);
+                
+                // Animação em 3 etapas para simular o arco (sobe, desacelera, cai)
+                confetti.animate([
+                    // Início (Centro, pequeno)
+                    { transform: `translate3d(-50%, -50%, 0) scale(0)`, opacity: 1, offset: 0 },
+                    
+                    // Explosão (20% do tempo): Sobe rápido e gira
+                    { transform: `translate3d(${forceX * 0.5}px, ${forceY * 0.8}px, 100px) scale(1) rotateX(${rotX}deg) rotateY(${rotY}deg) rotateZ(${rotZ}deg)`, opacity: 1, offset: 0.2 },
+                    
+                    // Ápice (50% do tempo): Ponto mais alto, desacelera a subida
+                    { transform: `translate3d(${forceX * 0.8}px, ${forceY}px, 200px) scale(1) rotateX(${rotX * 2}deg) rotateY(${rotY * 2}deg) rotateZ(${rotZ * 2}deg)`, opacity: 1, offset: 0.5 },
+                    
+                    // Queda (100% do tempo): Cai para fora da tela girando muito
+                    { transform: `translate3d(${forceX}px, ${endY}px, 0px) scale(0.8) rotateX(${rotX * spinMulti}deg) rotateY(${rotY * spinMulti}deg) rotateZ(${rotZ * spinMulti}deg)`, opacity: 0, offset: 1 }
+                ], { 
+                    duration: 2500 + Math.random() * 1500, // Duração variada entre 2.5s e 4s
+                    easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)', // Easing para um "pop" inicial
+                    fill: 'forwards',
+                    delay: Math.random() * 200 // Pequeno atraso no lançamento para não sair tudo junto
+                });
+                
+                // Remove o elemento depois que a animação acaba
+                setTimeout(() => confetti.remove(), 4500);
+            }
+        }
+    </script>
+</body>
+</html>
